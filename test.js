@@ -20,7 +20,7 @@ tape('health', async function (t) {
   }
 })
 
-tape('/student/:id', async function (t) {
+tape('getStudent - /student/:id', async function (t) {
   const url = `${endpoint}/student`;
 
   {
@@ -58,6 +58,38 @@ tape('/student/:id', async function (t) {
 
   t.end();
 });
+
+tape('getStudentGradesReport - /student/:id/grades', async function (t) {
+  const url = `${endpoint}/student`;
+  {
+    const { response, body } = await new Promise((resolve, reject) => {
+      jsonist.get(`${url}/bad-path/grades`, (err, body, response) => {
+        if (err) reject(err);
+        resolve({ response, body });
+      });
+    });
+    t.equal(response.statusCode, 400, 'Should return 400 error and fail request')
+    t.equal(body.error, 'Provide a valid student id');
+  }
+
+  {
+    const { data } = await jsonist.get(`${url}/1/grades`)
+    t.ok(data, 'Should return student grades data')
+    t.equal(data.id, 1, 'Should contain student with id that is provided')
+    t.ok(data.grades, 'Should contain grades of students')
+  }
+
+  {
+    const { response, body } = await new Promise((resolve, reject) => {
+      jsonist.get(`${url}/9990909090909090909090/grades`, (err, body, response) => {
+        if (err) reject(err);
+        resolve({ response, body });
+      });
+    });
+    t.equal(response.statusCode, 404, 'Should return not found for this student id');
+    t.equal(body.error, 'Student not found with this id');
+  }
+})
 
 tape('cleanup', function (t) {
   server.closeDB()
