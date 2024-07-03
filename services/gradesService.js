@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const gradesData = require('../data/gradesData')
 
 module.exports = {
@@ -8,6 +10,8 @@ module.exports = {
 //so the gradesData become available before hand
 gradesData.fetchGrades()
 
+const gradesReportFilePath = path.resolve(__dirname, '../data/static/gradesReport.json')
+
 async function getStudentGradesReportById(studentId) {
   const grades = await gradesData.fetchGrades()
   if (!grades) return
@@ -16,14 +20,20 @@ async function getStudentGradesReportById(studentId) {
 }
 
 async function generateCourseGradesReport() {
+  // Check if the report exists in the static file
+  if (doesFileExist(gradesReportFilePath)) {
+    const gradesReport = require(gradesReportFilePath)
+    return gradesReport
+  }
+
   const grades = await gradesData.fetchGrades();
   if (!grades) return [];
 
   const summary = {};
   const batchSize = 10000;
 
-  return new Promise((resolve) => {
-    const processBatch = function(data) {
+  const result = await new Promise((resolve) => {
+    const processBatch = function (data) {
       if (!data || !data.length) {
         const result = Object.entries(summary)
           .map(([course, stats]) => {
@@ -57,4 +67,21 @@ async function generateCourseGradesReport() {
 
     processBatch(grades);
   });
+
+  // Save the generated report to the static file
+  saveToFile(gradesReportFilePath, result);
+
+  return result;
+}
+
+function doesFileExist(filePath) {
+  try {
+    return fs.existsSync(filePath);
+  } catch (err) {
+    return false;
+  }
+}
+
+function saveToFile(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }

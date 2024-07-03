@@ -1,0 +1,32 @@
+[
+  {
+    "course": "Astronomy",
+    "highestGrade": 100,
+    "lowestGrade": 0,
+    "averageGrade": 50
+  },
+  {
+    "course": "Calculus",
+    "highestGrade": 100,
+    "lowestGrade": 0,
+    "averageGrade": 50
+  },
+  {
+    "course": "Microeconomics",
+    "highestGrade": 100,
+    "lowestGrade": 0,
+    "averageGrade": 50
+  },
+  {
+    "course": "Philosophy",
+    "highestGrade": 100,
+    "lowestGrade": 0,
+    "averageGrade": 50
+  },
+  {
+    "course": "Statistics",
+    "highestGrade": 100,
+    "lowestGrade": 0,
+    "averageGrade": 50
+  }
+]
