@@ -91,6 +91,13 @@ tape('getStudentGradesReport - /student/:id/grades', async function (t) {
   }
 })
 
+tape('getCourseGradesReport - /course/all/grades', async function (t) {
+  const url = `${endpoint}/course/all/grades`
+  const { response, data } = await jsonist.get(url)
+  t.ok(data, 'Should return grades report data')
+  t.equal(response.statusCode, 200, 'Should return 200 success status code')
+})
+
 tape('cleanup', function (t) {
   server.closeDB()
   server.close()

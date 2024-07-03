@@ -45,6 +45,11 @@ async function getStudentGradesReport (req, res, next) {
   }
 }
 
-async function getCourseGradesReport (req, res, next) {
-  throw new Error('This method has not been implemented yet.')
+async function getCourseGradesReport(req, res, next) {
+  try {
+    const courseGradesReport = await gradesService.generateCourseGradesReport();
+    res.status(200).json(courseGradesReport);
+  } catch (error) {
+    return next(serverError('Internal Server Error'));
+  }
 }

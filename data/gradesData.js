@@ -1,5 +1,6 @@
 const https = require('https')
 const JSONStream = require('JSONStream')
+const cache = require('../cache/cache')
 
 module.exports = {
   fetchGrades
@@ -7,11 +8,8 @@ module.exports = {
 
 const gradesURL = 'https://outlier-coding-test-data.onrender.com/grades.json'
 
-//the grades will be cache here when the server is started 
-//because the data is static in our case, its not changing.
-let grades
-
 async function fetchGrades() {
+  const grades = cache.get('grades')
   if (grades) return grades
 
   return new Promise((resolve, reject) => {
@@ -24,7 +22,8 @@ async function fetchGrades() {
 
       stream.on('data', jsonData => data.push(jsonData))
       stream.on('end', () => {
-        grades = data
+        cache.set('grades', data)
+        const grades = cache.get('grades')
         resolve(grades)
       })
       stream.on('error', e => reject(e))
